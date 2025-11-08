@@ -81,7 +81,7 @@ fetchProductData();
          </div>
 
       </div>
-      
+            
 
      </div>
 
