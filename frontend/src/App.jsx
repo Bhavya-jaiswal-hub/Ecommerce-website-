@@ -11,12 +11,15 @@ import Login from './pages/Login'
 import PlaceOrder from './pages/PlaceOrder'
 import Orders from './pages/Orders'
 import Footer from './components/Footer'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import SearchBar from './components/SearchBar'
 
 const App = () => {
   return (
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
       {/* Navbar will be displayed on all pages */}
+      <ToastContainer/>
       <Navbar /> 
       <SearchBar /> 
       <Routes>
