@@ -2,7 +2,9 @@ import React from 'react'
 
 const PlaceOrder = () => {
   return (
-    <div>PlaceOrder</div>
+    <div className='flex flex-col sm:flex-row justify-between gap-4 pt-5 '>
+
+    </div>
   )
 }
 
