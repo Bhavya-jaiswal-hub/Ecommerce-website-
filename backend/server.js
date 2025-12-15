@@ -19,7 +19,8 @@ app.use(express.json())
 app.use(cors({
   origin: [
     "https://zeestyle.in",
-    "https://www.zeestyle.in"
+    "https://www.zeestyle.in",
+    "https://ecommerce-websiteadmin.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "token"],
