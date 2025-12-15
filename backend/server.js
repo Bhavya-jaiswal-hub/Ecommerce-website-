@@ -22,8 +22,10 @@ app.use(cors({
     "https://www.zeestyle.in"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: ["Content-Type", "Authorization", "token"],
 }))
+
+app.options("*", cors());
 
 app.use('/api/user', userRouter)
 app.use('/api/product', productRouter)
