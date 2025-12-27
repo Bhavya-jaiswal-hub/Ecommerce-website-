@@ -3,11 +3,11 @@ import nodemailer from "nodemailer";
 const sendEmail = async ({ to, subject, html }) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: false, // true only for port 465
+    port: 465,              // ✅ FORCE 465
+    secure: true,           // ✅ MUST BE TRUE
     auth: {
-      user: process.env.SMTP_USER, // always "apikey" for Brevo
-      pass: process.env.SMTP_PASS, // Brevo SMTP key
+      user: "apikey",       // ✅ Brevo requirement
+      pass: process.env.SMTP_PASS,
     },
   });
 
@@ -20,3 +20,4 @@ const sendEmail = async ({ to, subject, html }) => {
 };
 
 export default sendEmail;
+  
