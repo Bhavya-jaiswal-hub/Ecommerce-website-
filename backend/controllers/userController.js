@@ -138,7 +138,7 @@ const forgotPassword = async (req, res) => {
     try {
       await sendEmail({
         to: user.email,
-        subject: "Reset Your ZeeStyle Password",
+        subject: "LOCAL RESET EMAIL TEST",
         html,
       });
 
