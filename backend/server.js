@@ -14,18 +14,25 @@ const port = process.env.PORT || 4000
 connectDB()
 connectCloudinary()
 
+// ✅ Body parser
 app.use(express.json())
 
-app.use(cors({
-  origin: [
-    "https://zeestyle.in",
-    "https://www.zeestyle.in",
-    "https://ecommerce-websiteadmin.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "token"],
-}))
+// ✅ CORS (LOCAL + PROD)
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",          // ✅ local frontend
+      "https://zeestyle.in",
+      "https://www.zeestyle.in",
+      "https://ecommerce-websiteadmin.vercel.app"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "token"],
+    credentials: true
+  })
+)
 
+// ✅ Routes
 app.use('/api/user', userRouter)
 app.use('/api/product', productRouter)
 app.use('/api/cart', cartRouter)

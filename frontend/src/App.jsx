@@ -10,6 +10,8 @@ import Cart from './pages/Cart'
 import Login from './pages/Login'
 import PlaceOrder from './pages/PlaceOrder'
 import Orders from './pages/Orders'
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Footer from './components/Footer'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,6 +35,9 @@ const App = () => {
         <Route path='/login' element={<Login />} /> 
         <Route path='/place-order' element={<PlaceOrder />} /> 
         <Route path='/orders' element={<Orders />} /> 
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+       <Route path="/reset-password/:token" element={<ResetPassword />} />
+
         <Route path='/verify' element={<Verify />} />
       </Routes>
       <Footer />
