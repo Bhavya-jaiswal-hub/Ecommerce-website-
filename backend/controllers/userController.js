@@ -91,13 +91,14 @@ const registerUser = async (req, res) => {
 
 // ================= FORGOT PASSWORD =================
 const forgotPassword = async (req, res) => {
-   
+  console.log("🔥 FORGOT PASSWORD CONTROLLER HIT 🔥");
 
   try {
     const { email } = req.body;
+    console.log("📩 Email received:", email);
 
-    // Basic validation
     if (!email) {
+      console.log("❌ Email missing");
       return res.json({
         success: false,
         message: "Email is required",
@@ -106,62 +107,55 @@ const forgotPassword = async (req, res) => {
 
     const user = await userModel.findOne({ email });
 
-    // Security: do NOT reveal if user exists or not
     if (!user) {
+      console.log("⚠️ User not found (security response)");
       return res.json({
         success: true,
         message: "If the email exists, a reset link has been sent",
       });
     }
 
-    // Generate reset token
+    // Generate token
     const resetToken = crypto.randomBytes(20).toString("hex");
+    console.log("🔑 Raw reset token:", resetToken);
 
-    // Hash token and set expiry
     user.resetPasswordToken = crypto
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
 
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
 
     await user.save({ validateBeforeSave: false });
 
+    console.log("🌍 FRONTEND_URL:", process.env.FRONTEND_URL);
+
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-    console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
+    console.log("🔗 Reset URL generated:", resetUrl);
 
     const html = resetPasswordTemplate({
       name: user.name,
       resetUrl,
     });
 
-    try {
-      await sendEmail({
-        to: user.email,
-        subject: "LOCAL RESET EMAIL TEST",
-        html,
-      });
+    console.log("✉️ Sending email with subject: 🔥 ZEESTYLE RESET v3");
 
-      return res.json({
-        success: true,
-        message: "Password reset email sent",
-      });
+    await sendEmail({
+      to: user.email,
+      subject: "🔥 ZEESTYLE RESET v3",
+      html,
+    });
 
-    } catch (emailError) {
-      // Cleanup if email fails
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save({ validateBeforeSave: false });
+    console.log("✅ Email sent successfully");
 
-      return res.status(500).json({
-        success: false,
-        message: "Email could not be sent",
-      });
-    }
+    return res.json({
+      success: true,
+      message: "Password reset email sent",
+    });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    console.error("❌ FORGOT PASSWORD ERROR:", error);
+    return res.status(500).json({
       success: false,
       message: "Server error",
     });
