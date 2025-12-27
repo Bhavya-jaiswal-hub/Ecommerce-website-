@@ -91,83 +91,14 @@ const registerUser = async (req, res) => {
 
 // ================= FORGOT PASSWORD =================
 const forgotPassword = async (req, res) => {
-   console.log("🔥 FORGOT PASSWORD CONTROLLER HIT");
 
-  try {
-    const { email } = req.body;
+  // 🚨 HARD TEST RESPONSE (NO EMAIL, NO DB)
+  return res.status(200).json({
+    success: false,
+    message: "🚨 BACKEND UPDATED TEST RESPONSE 🚨"
+  });
 
-    // Basic validation
-    if (!email) {
-      return res.json({
-        success: false,
-        message: "Email is required",
-      });
-    }
-
-    const user = await userModel.findOne({ email });
-
-    // Security: do NOT reveal if user exists or not
-    if (!user) {
-      return res.json({
-        success: true,
-        message: "If the email exists, a reset link has been sent",
-      });
-    }
-
-    // Generate reset token
-    const resetToken = crypto.randomBytes(20).toString("hex");
-
-    // Hash token and set expiry
-    user.resetPasswordToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
-
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
-
-    await user.save({ validateBeforeSave: false });
-
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-    console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
-
-    const html = resetPasswordTemplate({
-      name: user.name,
-      resetUrl,
-    });
-
-    try {
-      await sendEmail({
-        to: user.email,
-        subject: "LOCAL RESET EMAIL TEST",
-        html,
-      });
-
-      return res.json({
-        success: true,
-        message: "Password reset email sent",
-      });
-
-    } catch (emailError) {
-      // Cleanup if email fails
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save({ validateBeforeSave: false });
-
-      return res.status(500).json({
-        success: false,
-        message: "Email could not be sent",
-      });
-    }
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
 };
-
 
 
 
