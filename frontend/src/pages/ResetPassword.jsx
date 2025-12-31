@@ -18,10 +18,11 @@ const ResetPassword = () => {
     try {
       setLoading(true);
 
-      const { data } = await axios.put(
-        `${backendUrl}/api/user/reset-password/${token}`,
-        { password }
-      );
+      const { data } = await axios.post(
+  `${backendUrl}/api/user/reset-password/${token}`,
+  { password }
+);
+
 
       if (data.success) {
         toast.success(data.message);
