@@ -9,12 +9,13 @@ const Navbar = () => {
 
    const {setShowSearch,getCartCount, navigate,token,setToken,setCartItems} = useContext(ShopContext); 
      
-   const logout = ()  => {
-    localStorage.removeItem('')
-    setToken('')
-    setCartItems({})
-    navigate('/login')
-   }
+   const logout = () => {
+  localStorage.removeItem('token')   // ✅ correct key
+  setToken('')
+  setCartItems({})
+  navigate('/login')
+}
+
 
 
   return (
