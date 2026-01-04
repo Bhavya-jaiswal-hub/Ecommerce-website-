@@ -7,15 +7,11 @@ const Navbar = () => {
 
    const [visible,setVisible] = useState(false);
 
-   const {setShowSearch,getCartCount, navigate,token,setToken,setCartItems} = useContext(ShopContext); 
+   const { setShowSearch, getCartCount, navigate, token, logout } =
+  useContext(ShopContext);
+ 
      
-   const logout = () => {
-  localStorage.removeItem('token')   // ✅ correct key
-  setToken('')
-  setCartItems({})
-  navigate('/login')
-}
-
+   
 
 
   return (

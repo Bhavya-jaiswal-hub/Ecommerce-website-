@@ -2,6 +2,7 @@ import  React, { createContext,useEffect,useState } from "react";
 // import {products} from "../assets/assets";
 import { assets } from "../assets/assets";
 import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom"; 
 import axios from 'axios'
 
@@ -127,6 +128,38 @@ const ShopContextProvider = (props) => {
        return totalAmount;
      }   
 
+     const logout = () => {
+  setToken('');
+  setCartItems({});
+  localStorage.removeItem('token');
+  toast.info("Session expired. Please login again.");
+  navigate('/login');
+};
+
+
+const checkTokenExpiry = (jwtToken) => {
+  try {
+    const decoded = jwtDecode(jwtToken);
+    const currentTime = Date.now() / 1000;
+
+    if (decoded.exp < currentTime) {
+      logout();
+      return;
+    }
+
+    // Auto logout timer
+    const remainingTime = (decoded.exp - currentTime) * 1000;
+
+    setTimeout(() => {
+      logout();
+    }, remainingTime);
+
+  } catch (error) {
+    logout();
+  }
+};
+
+
 
 
       const getProductData = async () => {
@@ -163,12 +196,15 @@ const ShopContextProvider = (props) => {
        },[])  
         
 
-       useEffect(() => {
-          if(!token && localStorage.getItem('token')) {
-             setToken(localStorage.getItem('token'))
-             getUserCart(localStorage.getItem('token'))
-          }
-       },[])
+      useEffect(() => {
+  const storedToken = localStorage.getItem('token');
+
+  if (storedToken) {
+    setToken(storedToken);
+    checkTokenExpiry(storedToken);
+    getUserCart(storedToken);
+  }
+}, []);
 
 
     
@@ -176,7 +212,7 @@ const ShopContextProvider = (props) => {
      
     const value = {
          products, currency, delivery_fee,
-         search,setSearch,showSearch,setShowSearch,getCartCount,cartItems,setCartItems,addToCart,updateQuantity,getCartAmount, navigate,backendUrl,token, setToken 
+         search,setSearch,showSearch,setShowSearch,getCartCount,cartItems,setCartItems,addToCart,updateQuantity,getCartAmount, navigate,backendUrl,token,logout, setToken 
     }
 
     return (
