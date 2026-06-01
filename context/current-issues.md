@@ -38,6 +38,7 @@ npm.cmd run build
 | 11 | admin/dist not in gitignore | Low | Closed |
 | 12 | Unused backend dependencies in package.json | Low | Closed |
 | 13 | Large image assets bundled in frontend build | Low | Closed |
+| 14 | Product Detail Page Does Not Load on Click | High | Closed |
 
 ## Issue 01 — Admin JWT creation and verification mismatch
 
@@ -448,3 +449,45 @@ Low
 - [ ] Large frontend image assets are reviewed for optimization.
 - [ ] Asset imports continue to render correctly after any optimization.
 - [ ] `npm.cmd run build` passes in affected app.
+
+## Issue 14 — Product Detail Page Does Not Load on Click
+
+### Description
+Clicking any product card updates the URL to 
+/product/:productId but the product detail page 
+does not render. Page only shows after manual refresh.
+
+### Affected Files
+frontend/src/pages/Product.jsx
+frontend/src/pages/Collection.jsx
+frontend/src/components/ProductItem.jsx
+frontend/src/context/ShopContext.jsx
+
+### Root Cause
+Issue 08 fix changed Product.jsx to fetch from 
+/api/product/single directly instead of deriving 
+from ShopContext product list. The product route also 
+had no immediate context fallback while the request 
+was pending. Collection.jsx had a runtime render loop 
+because the sort effect depended on filterProducts 
+and updated filterProducts again, so clicking product 
+links could leave the collection UI stuck while the 
+URL changed.
+
+### Fix Direction
+Check Product.jsx useEffect — ensure productId from 
+useParams is in the dependency array so the component 
+re-fetches when URL changes without a full page reload. 
+Keep product detail in sync with ShopContext products 
+for immediate render, and remove Collection.jsx state 
+effect loops that can block route transitions. Product 
+route changes from the related-products section should 
+also scroll back to the top of the product detail page.
+
+### Priority
+High
+
+### Acceptance Criteria
+- [x] Clicking a product card renders the product detail page without refresh
+- [x] Navigating back and clicking another product also works
+- [x] npm.cmd run build passes in frontend/

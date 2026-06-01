@@ -12,29 +12,64 @@ const Product = () => {
     
   const {productId}  = useParams(); 
   {/* this hook is used to take the data from the link */}
-  const {backendUrl,currency,addToCart} = useContext(ShopContext);
+  const {backendUrl,currency,addToCart,products} = useContext(ShopContext);
   const [productData, setProductData] = useState(false);
   const [image,setImage]  = useState('')
   const [size,setSize] = useState('')
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [productId]);
+
   useEffect(() =>  {
+    let isCurrentProduct = true;
+    const contextProduct = products.find((item) => item._id === productId);
+
+    setSize('');
+    if (contextProduct) {
+      setProductData(contextProduct);
+      setImage(contextProduct.image[0]);
+    } else {
+      setProductData(false);
+      setImage('');
+    }
+
     const fetchProductData = async () => {
       try {
         const response = await axios.post(backendUrl + '/api/product/single', { productId });
+        if (!isCurrentProduct) {
+          return;
+        }
+
         if (response.data.success) {
           setProductData(response.data.product);
           setImage(response.data.product.image[0]);
         } else {
-          toast.error(response.data.message);
+          const message = response.data.message || '';
+          const isAuthMessage = /authori[sz]ed|login again/i.test(message);
+
+          if (!contextProduct && !isAuthMessage) {
+            toast.error(message);
+          }
         }
       } catch (error) {
+        if (!isCurrentProduct) {
+          return;
+        }
+
         console.log(error);
         toast.error(error.message);
       }
     }
 
-    fetchProductData();
-},[backendUrl, productId]);
+    if (productId) {
+      fetchProductData();
+    }
+
+    return () => {
+      isCurrentProduct = false;
+    };
+},[backendUrl, productId, products]);
   
 
   return productData? (

@@ -33,6 +33,7 @@ Current baseline:
 - Issue 11 closed: `.gitignore` now ignores `admin/dist/`.
 - Issue 12 closed: unused backend email SDK dependencies were removed.
 - Issue 13 closed: hero/about/contact images now load from `frontend/public/` instead of the Vite asset bundle.
+- Issue 14 closed: customer product links now route cleanly by removing the Collection render loop and making Product detail render immediately from ShopContext while re-fetching `/api/product/single` for the current `/product/:productId`. The product page treats that API refresh as non-blocking so stale admin/auth responses do not show unwanted toasts on public product details. Related-product clicks now scroll back to the top of the newly selected product, and the related list excludes the current product.
 
 Spec context created:
 
@@ -89,7 +90,7 @@ For new features:
 - The project has three separate apps: customer `frontend`, admin `admin`, and Express/MongoDB `backend`.
 - Customer and admin production builds pass, and both lint scripts pass.
 - Automated tests are not configured.
-- Admin auth, checkout error handling, admin order catch blocks, Authorization header migration, `req.userId` auth identity, public product detail, frontend/admin lint cleanup, rupee currency display, unused backend email SDK dependencies, large static frontend page images, and admin build output ignores were fixed on 2026-06-01.
+- Admin auth, checkout error handling, admin order catch blocks, Authorization header migration, `req.userId` auth identity, public product detail, frontend/admin lint cleanup, rupee currency display, unused backend email SDK dependencies, large static frontend page images, admin build output ignores, product detail route-param re-fetching, and the Collection render loop blocking product navigation were fixed on 2026-06-01.
 - Some source files contain mojibake for the intended rupee symbol and check/cross console text. Currency display should be normalized deliberately rather than copied blindly.
 - `PlaceOrder.jsx` uses `toast` without importing it, so payment/order error paths can break at runtime.
 - `Collection.jsx` imports `use` from React even though it is unused.

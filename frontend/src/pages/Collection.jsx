@@ -51,28 +51,22 @@ const Collection = () => {
       productsCopy = productsCopy.filter(item => subcategory.includes(item.subCategory));
      }
   
+     switch (sortType) {
+        case 'low-high':
+          productsCopy.sort((a,b) => (a.price  - b.price));
+          break;
+
+        case 'high-low':
+          productsCopy.sort((a,b) => (b.price - a.price));
+          break;
+
+        default:
+          break;
+     }
+
      setFilterProducts(productsCopy);
 
-  }, [category, products, search, showSearch, subcategory])
-
-
-  const sortProduct = useCallback(() => {
-      let fpCopy = filterProducts.slice();
-
-      switch (sortType) {
-         case 'low-high' : 
-         setFilterProducts(fpCopy.sort((a,b) => (a.price  - b.price)));
-         break;
-    
-         case 'high-low':
-          setFilterProducts(fpCopy.sort((a,b) => (b.price - a.price)));
-          break;
-
-          default:
-          applyFilter();
-          break;
-      }
-  }, [applyFilter, filterProducts, sortType])
+  }, [category, products, search, showSearch, sortType, subcategory])
 
   useEffect(() => {
      setFilterProducts(products);
@@ -85,15 +79,6 @@ const Collection = () => {
      applyFilter();
   }, [applyFilter])
 
-  useEffect(() => {
-    sortProduct();
-  },[sortProduct])
-
-
-  
-
-
-   
   return (
     <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t' >
        {/* filter options */}

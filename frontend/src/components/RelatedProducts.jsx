@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContextValue'
 import { useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import Title from './Title'
 import ProductItem from './ProductItem'
 
 const RelatedProducts = ({category,subCategory}) => {
     const {products} = useContext(ShopContext)
+    const { productId } = useParams();
     const [related,setRelated] = useState([]);
 
     useEffect(() => {
@@ -14,11 +16,12 @@ const RelatedProducts = ({category,subCategory}) => {
 
              productsCopy = productsCopy.filter((item) => category === item.category);
              productsCopy = productsCopy.filter((item) => subCategory === item.subCategory);
+             productsCopy = productsCopy.filter((item) => item._id !== productId);
 
              
              setRelated(productsCopy.slice(0,5));
          }
-    },[category, products, subCategory])
+    },[category, productId, products, subCategory])
   return ( 
     <div className='my-24'>
      <div className='text-center text-3xl py-2'>
