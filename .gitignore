@@ -4,6 +4,7 @@ backend/node_modules/
 
 # Build outputs
 frontend/dist/
+admin/dist/
 backend/dist/
 
 # Environment files
