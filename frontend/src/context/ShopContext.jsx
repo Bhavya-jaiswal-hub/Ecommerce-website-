@@ -1,16 +1,14 @@
-import  React, { createContext,useEffect,useState } from "react";
+import  React, { useCallback,useEffect,useState } from "react";
 // import {products} from "../assets/assets";
-import { assets } from "../assets/assets";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom"; 
 import axios from 'axios'
-
-export const ShopContext = createContext();
+import { ShopContext } from "./ShopContextValue";
 
 const ShopContextProvider = (props) => {
 
-   const currency = '₹'; // ✅ 
+   const currency = '₹';
     const delivery_fee = 0;  
    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -47,7 +45,7 @@ const ShopContextProvider = (props) => {
        if(token) {
            try {
              
-              await axios.post(backendUrl + '/api/cart/add' , {itemId, size} , {headers: {token}})
+              await axios.post(backendUrl + '/api/cart/add' , {itemId, size} , {headers: {Authorization: `Bearer ${token}`}})
 
            }  catch (error) {
                console.log(error)
@@ -68,8 +66,8 @@ const ShopContextProvider = (props) => {
 
                }
 
-                catch (error) {
-                   
+                catch {
+                   continue;
                 }
             
           }
@@ -98,7 +96,7 @@ const ShopContextProvider = (props) => {
      if(token) {
        try {
         
-        await axios.post(backendUrl + '/api/cart/update', {itemId, size, quantity}, {headers: {token}})
+        await axios.post(backendUrl + '/api/cart/update', {itemId, size, quantity}, {headers: {Authorization: `Bearer ${token}`}})
 
 
        }    catch(error) {
@@ -120,24 +118,24 @@ const ShopContextProvider = (props) => {
                    totalAmount = totalAmount + itemInfo.price * cartItems[items][item];
                }
              }
-             catch (error) {
-                
+             catch {
+                continue;
              }
           }
        }
        return totalAmount;
      }   
 
-     const logout = () => {
+     const logout = useCallback(() => {
   setToken('');
   setCartItems({});
   localStorage.removeItem('token');
   toast.info("Session expired. Please login again.");
   navigate('/login');
-};
+}, [navigate]);
 
 
-const checkTokenExpiry = (jwtToken) => {
+const checkTokenExpiry = useCallback((jwtToken) => {
   try {
     const decoded = jwtDecode(jwtToken);
     const currentTime = Date.now() / 1000;
@@ -154,15 +152,15 @@ const checkTokenExpiry = (jwtToken) => {
       logout();
     }, remainingTime);
 
-  } catch (error) {
+  } catch {
     logout();
   }
-};
+}, [logout]);
 
 
 
 
-      const getProductData = async () => {
+      const getProductData = useCallback(async () => {
           try {
              const response = await axios.get(backendUrl + '/api/product/list')  
               if(response.data.success) {
@@ -175,12 +173,12 @@ const checkTokenExpiry = (jwtToken) => {
              console.log(error) 
              toast.error(error.message)
           }
-      }   
+      }, [backendUrl])   
     
-      const getUserCart = async (token)  => {
+      const getUserCart = useCallback(async (token)  => {
           try {
               
-            const response = await axios.post(backendUrl + '/api/cart/get',{},{headers:{token}})
+            const response = await axios.post(backendUrl + '/api/cart/get',{},{headers:{Authorization: `Bearer ${token}`}})
             if(response.data.success) {
                 setCartItems(response.data.cartData)
             }
@@ -188,12 +186,12 @@ const checkTokenExpiry = (jwtToken) => {
              console.log(error) 
             toast.error(error.message)
           }
-      }
+      }, [backendUrl])
 
 
        useEffect(()  => {
           getProductData();
-       },[])  
+       },[getProductData])  
         
 
       useEffect(() => {
@@ -204,7 +202,7 @@ const checkTokenExpiry = (jwtToken) => {
     checkTokenExpiry(storedToken);
     getUserCart(storedToken);
   }
-}, []);
+}, [checkTokenExpiry, getUserCart]);
 
 
     

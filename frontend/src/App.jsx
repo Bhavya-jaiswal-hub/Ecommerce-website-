@@ -13,7 +13,7 @@ import Orders from './pages/Orders'
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Footer from './components/Footer'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SearchBar from './components/SearchBar'
 import Verify from './pages/Verify'

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { backendUrl, currency } from "../App";
+import { backendUrl, currency } from "../config";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
 
 const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
 
-  const fetchAllOrders = async () => {
+  const fetchAllOrders = useCallback(async () => {
     if (!token) {
       return null;
     }
@@ -16,7 +16,7 @@ const Orders = ({ token }) => {
       const response = await axios.post(
         backendUrl + "/api/order/list",
         {},
-        { headers: { token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.data.success) {
         setOrders(response.data.orders.reverse());
@@ -26,11 +26,11 @@ const Orders = ({ token }) => {
     } catch (error) {
       toast.error(error.response?.data?.message || error.message);
     }
-  };  
+  }, [token]);  
 
   const statusHandler = async (event,orderId) => {
      try {
-         const response = await axios.post(backendUrl + '/api/order/status', {orderId, status:event.target.value}, {headers:{token}})  
+         const response = await axios.post(backendUrl + '/api/order/status', {orderId, status:event.target.value}, {headers:{Authorization: `Bearer ${token}`}})  
          if(response.data.success) {
            await fetchAllOrders()
          }
@@ -41,8 +41,9 @@ const Orders = ({ token }) => {
   }
 
   useEffect(() => {
-    fetchAllOrders();
-  }, [token]);
+    const fetchTimer = setTimeout(fetchAllOrders, 0);
+    return () => clearTimeout(fetchTimer);
+  }, [fetchAllOrders]);
 
   return (
     <div>

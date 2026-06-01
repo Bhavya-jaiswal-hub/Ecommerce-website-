@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { ShopContext } from "../context/ShopContext";
+import { ShopContext } from "../context/ShopContextValue";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -31,7 +31,7 @@ const ResetPassword = () => {
         toast.error(data.message);
       }
 
-    } catch (error) {
+    } catch {
       toast.error("Invalid or expired link");
     } finally {
       setLoading(false);

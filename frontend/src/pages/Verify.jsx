@@ -1,5 +1,5 @@
-import React, { useContext , useEffect } from 'react'
-import { ShopContext } from '../context/ShopContext'
+import React, { useCallback, useContext , useEffect } from 'react'
+import { ShopContext } from '../context/ShopContextValue'
 import { useSearchParams } from 'react-router-dom'
 import axios from 'axios' 
 import {toast} from 'react-toastify'
@@ -7,20 +7,20 @@ import {toast} from 'react-toastify'
 const Verify = () => {
   
     const {navigate, token, setCartItems , backendUrl} = useContext(ShopContext)
-    const [searchParams, setsearchParams] = useSearchParams()
+    const [searchParams] = useSearchParams()
 
     const success = searchParams.get('success')
     const orderId = searchParams.get('orderId')
    
 
-    const verifyPayment = async ()  => {
+    const verifyPayment = useCallback(async ()  => {
          try {
               
             if(!token){
                  return null;
             }
            
-            const response = await axios.post(backendUrl + '/api/order/verifyStripe', {success, orderId} , {headers: {token}})
+            const response = await axios.post(backendUrl + '/api/order/verifyStripe', {success, orderId} , {headers: {Authorization: `Bearer ${token}`}})
            
              if(response.data.success) {
                  setCartItems({})
@@ -32,11 +32,11 @@ const Verify = () => {
              console.log(error)
              toast.error(error.message)
          }
-    }
+    }, [backendUrl, navigate, orderId, setCartItems, success, token])
 
     useEffect(() => {
         verifyPayment()
-    },[token])
+    },[verifyPayment])
 
   return (
     <div>

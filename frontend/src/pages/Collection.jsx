@@ -1,5 +1,5 @@
-import React, { use, useContext , useEffect, useState } from 'react'
-import { ShopContext } from '../context/ShopContext'
+import React, { useCallback, useContext , useEffect, useState } from 'react'
+import { ShopContext } from '../context/ShopContextValue'
 import { assets } from '../assets/assets';
 import Title from '../components/Title';
 import ProductItem from '../components/ProductItem'
@@ -36,7 +36,7 @@ const Collection = () => {
 
   }
 
-  const applyFilter = () => {
+  const applyFilter = useCallback(() => {
      let productsCopy = products.slice();
 
      if(showSearch && search) {
@@ -53,10 +53,10 @@ const Collection = () => {
   
      setFilterProducts(productsCopy);
 
-  }
+  }, [category, products, search, showSearch, subcategory])
 
 
-  const sortProduct = () => {
+  const sortProduct = useCallback(() => {
       let fpCopy = filterProducts.slice();
 
       switch (sortType) {
@@ -72,22 +72,22 @@ const Collection = () => {
           applyFilter();
           break;
       }
-  }
+  }, [applyFilter, filterProducts, sortType])
 
   useEffect(() => {
      setFilterProducts(products);
-  },[])
+  },[products])
 
  
 
 
   useEffect(() => {
      applyFilter();
-  }, [category,subcategory,search,showSearch,products])
+  }, [applyFilter])
 
   useEffect(() => {
     sortProduct();
-  },[sortType])
+  },[sortProduct])
 
 
   

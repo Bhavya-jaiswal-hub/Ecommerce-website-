@@ -27,7 +27,7 @@ app.use(
       "https://ecommerce-websiteadmin.vercel.app"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "token"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
   })
 )

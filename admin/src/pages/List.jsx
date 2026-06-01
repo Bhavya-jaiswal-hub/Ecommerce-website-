@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { backendUrl, currency } from '../App' 
+import React, { useCallback, useEffect } from 'react'
+import { backendUrl, currency } from '../config' 
 import { useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 const List = ({token}) => { 
 
    const [list,setList]  = useState([]); 
-   const fetchList = async() => {
+   const fetchList = useCallback(async() => {
      try {
         const response  = await axios.get(backendUrl + '/api/product/list') 
 
@@ -24,11 +24,11 @@ const List = ({token}) => {
         console.log(error)
         toast.error(error.message)
      }
-   }  
+   }, [])  
     
     const removeProduct = async (id) => {
          try { 
-           const response =  await  axios.post(backendUrl + '/api/product/remove' , {id} , {headers: {token}}) 
+           const response =  await  axios.post(backendUrl + '/api/product/remove' , {id} , {headers: {Authorization: `Bearer ${token}`}}) 
                  if(response.data.success) {
                    toast.success(response.data.message)
                    await fetchList();
@@ -47,8 +47,9 @@ const List = ({token}) => {
   
 
    useEffect(() => {
-       fetchList()
-   },[])
+       const fetchTimer = setTimeout(fetchList, 0)
+       return () => clearTimeout(fetchTimer)
+   },[fetchList])
      return (
     <>
     <p className='mb-2'>All Products List</p>   

@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken'
 const adminAuth = async(req,res,next) => {
      try {
          
-        const {token}  = req.headers;
+        const authHeader = req.headers.authorization || req.headers.Authorization;
+        const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
         if(!token) {
              return res.json({success:false , message: "Not Authorised Login Again"})
 

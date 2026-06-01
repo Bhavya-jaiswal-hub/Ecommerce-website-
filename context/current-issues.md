@@ -1,13 +1,13 @@
 # Current Issues
 
-Last checked: 2026-05-31.
+Last checked: 2026-06-01.
 
 Verification baseline:
 
 - `frontend` build passes.
 - `admin` build passes.
-- `frontend` lint fails with 22 errors and 10 warnings.
-- `admin` lint fails with 7 errors and 1 warning.
+- `frontend` lint passes.
+- `admin` lint passes.
 
 Commands run:
 
@@ -28,16 +28,16 @@ npm.cmd run build
 | 01 | Admin JWT creation and verification mismatch | Critical | Closed |
 | 02 | Missing toast import in PlaceOrder.jsx | High | Closed |
 | 03 | Admin Orders catch block references undefined response variable | High | Closed |
-| 04 | Frontend lint fails with 22 errors and 10 warnings | High | Open |
-| 05 | Admin lint fails with 7 errors and 1 warning | High | Open |
-| 06 | Custom token header used instead of Authorization header | Medium | Open |
-| 07 | Auth middleware writes userId into req.body | Medium | Open |
-| 08 | Single product endpoint is admin protected | Medium | Open |
-| 09 | Currency symbol mojibake in source files | Medium | Open |
+| 04 | Frontend lint fails with 22 errors and 10 warnings | High | Closed |
+| 05 | Admin lint fails with 7 errors and 1 warning | High | Closed |
+| 06 | Custom token header used instead of Authorization header | Medium | Closed |
+| 07 | Auth middleware writes userId into req.body | Medium | Closed |
+| 08 | Single product endpoint is admin protected | Medium | Closed |
+| 09 | Currency symbol mojibake in source files | Medium | Closed |
 | 10 | No automated tests configured | Medium | Open |
 | 11 | admin/dist not in gitignore | Low | Closed |
-| 12 | Unused backend dependencies in package.json | Low | Open |
-| 13 | Large image assets bundled in frontend build | Low | Open |
+| 12 | Unused backend dependencies in package.json | Low | Closed |
+| 13 | Large image assets bundled in frontend build | Low | Closed |
 
 ## Issue 01 — Admin JWT creation and verification mismatch
 

@@ -1,35 +1,40 @@
 import React, { useEffect,useState } from 'react'
 import { useContext } from 'react';
 import { useParams } from 'react-router-dom'
-import { ShopContext } from '../context/ShopContext';
+import { ShopContext } from '../context/ShopContextValue';
 import { assets } from '../assets/assets';
 import RelatedProducts from '../components/RelatedProducts';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
 const Product = () => {
     
   const {productId}  = useParams(); 
   {/* this hook is used to take the data from the link */}
-  const {products,currency,addToCart} = useContext(ShopContext);
+  const {backendUrl,currency,addToCart} = useContext(ShopContext);
   const [productData, setProductData] = useState(false);
   const [image,setImage]  = useState('')
   const [size,setSize] = useState('')
 
-  const fetchProductData = async () => {
-    products.map((item) => {
-       if(item._id === productId) {
-         setProductData(item);
-         setImage(item.image[0]);
-        
-         return null;
-       }
-    })
-  }
-
   useEffect(() =>  {
-fetchProductData();
-  
-},[productId, products]);
+    const fetchProductData = async () => {
+      try {
+        const response = await axios.post(backendUrl + '/api/product/single', { productId });
+        if (response.data.success) {
+          setProductData(response.data.product);
+          setImage(response.data.product.image[0]);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    }
+
+    fetchProductData();
+},[backendUrl, productId]);
   
 
   return productData? (

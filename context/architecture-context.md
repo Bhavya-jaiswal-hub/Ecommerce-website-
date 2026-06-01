@@ -26,13 +26,16 @@
 
 - Customer auth uses JWTs issued by register/login and verified by `authUser`.
 - Admin auth uses a JWT issued by admin login and verified by `adminAuth`.
-- Clients send tokens in the custom `token` request header.
+- Clients send tokens in the standard `Authorization: Bearer <token>` request header.
+- Product list and single-product detail endpoints are public catalog reads.
 - Protected controllers must use the authenticated user/admin identity from middleware, not trust client-supplied identity.
 
 ## Invariants
 
 - Protected customer routes must pass through `authUser` before reading or changing user cart or order data.
 - Protected admin routes must pass through `adminAuth` before adding/removing products or reading/updating all orders.
+- Authenticated customer controllers read `req.userId` set by `authUser`, not user-supplied body data.
+- Customer product detail reads `/api/product/single` directly by product id.
 - API responses must include a `success` boolean so both React clients can branch consistently.
 - Product creation must save image URLs, category, subCategory, parsed sizes, numeric price, bestseller flag, and timestamp together.
 - Order placement must persist the order before clearing cart data or starting payment verification.

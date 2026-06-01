@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { ShopContext } from '../context/ShopContext'
+import React, { useCallback, useContext } from 'react'
+import { ShopContext } from '../context/ShopContextValue'
 import Title from '../components/Title';
 import { useEffect,useState } from 'react';
 import axios from 'axios';
@@ -7,16 +7,16 @@ import axios from 'axios';
 
 const Orders = () => {
     
-  const {products,currency,backendUrl,token}  = useContext(ShopContext);  
+  const {currency,backendUrl,token}  = useContext(ShopContext);  
 
   const [orderData, setorderData] = useState([])  
 
-  const loadOrderData = async ()  => {
+  const loadOrderData = useCallback(async ()  => {
      try {
        if(!token)  {
          return null
        }  
- const response  = await axios.post(backendUrl + '/api/order/userorders' , {} , {headers: {token}})
+ const response  = await axios.post(backendUrl + '/api/order/userorders' , {} , {headers: {Authorization: `Bearer ${token}`}})
  if(response.data.success) {
    let allOrdersItem = []  
    response.data.orders.map((order)  => {
@@ -31,13 +31,13 @@ const Orders = () => {
    setorderData(allOrdersItem.reverse())
  }
      }  catch(error) {
-       
+       console.log(error)
      }
-  }  
+  }, [backendUrl, token])  
 
   useEffect(()  => {
      loadOrderData()
-  } , [token])
+  } , [loadOrderData])
 
   return (
     <div className='border-t pt-16'>

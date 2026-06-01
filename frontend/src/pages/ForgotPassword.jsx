@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { ShopContext } from "../context/ShopContext";
+import { ShopContext } from "../context/ShopContextValue";
 
 const ForgotPassword = () => {
   const { backendUrl } = useContext(ShopContext);
@@ -25,7 +25,7 @@ const ForgotPassword = () => {
         toast.error(data.message);
       }
 
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong");
     } finally {
       setLoading(false);

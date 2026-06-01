@@ -22,8 +22,8 @@
 - Use `try/catch` in async controllers.
 - Keep controller exports named and route imports explicit.
 - Mongoose models use lowercase collection model names: `user`, `product`, and `order`.
-- Authenticated customer controllers expect `authUser` to write `userId` into `req.body`.
-- Protected admin routes expect the custom `token` header.
+- Authenticated customer controllers expect `authUser` to write `userId` into `req.userId`.
+- Protected customer and admin routes expect `Authorization: Bearer <token>`.
 
 ## Environment and Secrets
 
@@ -70,8 +70,8 @@ Current baseline:
 
 - `frontend` build passes.
 - `admin` build passes.
-- `frontend` lint fails.
-- `admin` lint fails.
+- `frontend` lint passes.
+- `admin` lint passes.
 
 See `current-issues.md` for the observed lint failures.
 
