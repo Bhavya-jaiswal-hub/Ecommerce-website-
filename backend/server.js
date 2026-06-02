@@ -21,7 +21,8 @@ app.use(express.json())
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",          // ✅ local frontend
+      "http://localhost:5173",          // local frontend
+      "http://localhost:5174",          // local admin
       "https://zeestyle.in",
       "https://www.zeestyle.in",
       "https://ecommerce-websiteadmin.vercel.app"

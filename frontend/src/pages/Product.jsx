@@ -41,14 +41,14 @@ const Product = () => {
           return;
         }
 
-        if (response.data.success) {
+        if (response.data.success && response.data.product) {
           setProductData(response.data.product);
           setImage(response.data.product.image[0]);
         } else {
           const message = response.data.message || '';
           const isAuthMessage = /authori[sz]ed|login again/i.test(message);
 
-          if (!contextProduct && !isAuthMessage) {
+          if (!contextProduct && !isAuthMessage && message) {
             toast.error(message);
           }
         }
