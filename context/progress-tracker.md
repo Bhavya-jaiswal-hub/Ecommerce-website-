@@ -8,7 +8,7 @@ Spec-driven feature implementation.
 
 ## Current Goal
 
-Implement Spec 01: product size guard and customer order cancellation.
+Implement Issue 15: prevent admins from overriding cancelled orders.
 
 ## Completed
 
@@ -37,6 +37,7 @@ Current baseline:
 - Storefront product loading follows the admin catalog: customer product lists mirror `/api/product/list`, so an empty backend product collection intentionally renders no products.
 - Admin local login CORS fixed: backend now allows `http://localhost:5174` so the admin Vite dev server can call `/api/user/admin` during local development.
 - Spec 01 complete: Product detail now blocks Add to Cart without a selected size, `/api/order/cancel` lets authenticated customers cancel their own eligible orders, and the customer Orders page supports cancellation plus inline order tracking steps.
+- Issue 15 closed: admin status updates now reject orders that are already `Cancelled`, and the admin Orders page renders cancelled orders as muted rows with a red non-interactive `Cancelled` label instead of a status dropdown.
 
 Spec context created:
 
@@ -97,6 +98,7 @@ For new features:
 - On 2026-06-02, local `/api/product/list` was confirmed to return `success: true` with an empty `products` array because the admin removed all products. A temporary demo fallback was removed so the customer app shows only admin-created backend products.
 - On 2026-06-02, admin login from `http://localhost:5174` was blocked by the backend CORS allowlist. Added the local admin origin to `backend/server.js`; `node --check backend/server.js` and `admin` build pass.
 - On 2026-06-09, Spec 01 was implemented across `frontend/src/pages/Product.jsx`, `backend/controllers/orderController.js`, `backend/routes/orderRoute.js`, and `frontend/src/pages/Orders.jsx`. Cancellation is owner-checked through `req.userId`, blocked for shipped/out-for-delivery/delivered orders, and uses `Authorization: Bearer` from the customer Orders page.
+- On 2026-06-09, Issue 15 was implemented across `backend/controllers/orderController.js` and `admin/src/pages/Orders.jsx`. `updateStatus` now loads the current order, returns `{ success: false, message: 'Cancelled orders cannot be updated' }` for cancelled orders, and the admin UI removes status controls from cancelled order rows.
 - Some source files contain mojibake for the intended rupee symbol and check/cross console text. Currency display should be normalized deliberately rather than copied blindly.
 - `PlaceOrder.jsx` uses `toast` without importing it, so payment/order error paths can break at runtime.
 - `Collection.jsx` imports `use` from React even though it is unused.

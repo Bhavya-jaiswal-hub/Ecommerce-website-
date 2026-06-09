@@ -491,3 +491,61 @@ High
 - [x] Clicking a product card renders the product detail page without refresh
 - [x] Navigating back and clicking another product also works
 - [x] npm.cmd run build passes in frontend/
+
+
+## Issue 15 — Cancelled Orders Can Be Overridden by Admin
+
+### Description
+
+When a customer cancels an order, the admin orders page still
+shows the order with a fully functional status dropdown. The admin
+can change the status to anything (Shipped, Out for delivery, etc.)
+which silently overrides the customer's cancellation. From the
+customer's side the order reappears as active with the new status,
+as if the cancellation never happened.
+
+### Affected Files
+
+- `backend/controllers/orderController.js`
+- `admin/src/pages/Orders.jsx`
+
+### Root Cause
+
+Two gaps working together:
+
+1. The admin status update controller has no guard against
+   updating an order that is already `Cancelled`. It overwrites
+   the status unconditionally.
+
+2. The admin Orders page renders the same status dropdown for
+   every order regardless of current status. There is no visual
+   distinction or interaction block for cancelled orders.
+
+### Fix Direction
+
+Backend: in the admin status update controller, check if the
+current order status is `Cancelled` before applying the update.
+If it is, return `{ success: false, message: '...' }` and do
+not save.
+
+Admin UI: when an order status is `Cancelled`, replace the
+status dropdown with a plain red `Cancelled` text label so the
+admin cannot interact with it. Apply a muted visual style to
+the entire cancelled order row so admins can scan past them
+easily.
+
+### Priority
+
+High
+
+### Acceptance Criteria
+
+- [ ] Admin status update controller rejects updates to orders
+      with status `Cancelled`.
+- [ ] Admin Orders page shows a red `Cancelled` label instead
+      of a dropdown for cancelled orders.
+- [ ] Admin cannot change a cancelled order to any other status
+      from the UI or the API.
+- [ ] Existing non-cancelled order status updates are unaffected.
+- [ ] `npm.cmd run build` passes in `admin/`.
+- [ ] Backend syntax check passes on `orderController.js`.

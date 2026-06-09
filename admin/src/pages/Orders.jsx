@@ -33,6 +33,8 @@ const Orders = ({ token }) => {
          const response = await axios.post(backendUrl + '/api/order/status', {orderId, status:event.target.value}, {headers:{Authorization: `Bearer ${token}`}})  
          if(response.data.success) {
            await fetchAllOrders()
+         } else {
+           toast.error(response.data.message)
          }
      } catch(error) {  
        console.log(error)
@@ -49,8 +51,11 @@ const Orders = ({ token }) => {
     <div>
       <h3> Order Page</h3>
       <div>
-        {orders.map((order, index) => (
-          <div className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border-2 border-gray-200 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700' key={index}>
+        {orders.map((order, index) => {
+          const isCancelled = order.status === 'Cancelled'
+
+          return (
+          <div className={`grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border-2 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm ${isCancelled ? 'border-red-100 bg-gray-50 text-gray-400 opacity-80' : 'border-gray-200 text-gray-700'}`} key={index}>
             <img className="w-12" src={assets.parcel_icon} alt="" />
             <div>
               <div>
@@ -93,15 +98,20 @@ const Orders = ({ token }) => {
 
               </div>
               <p className='text-sm sm:text-[15px]'>{currency}{order.amount}</p>
-              <select onChange={(event) => statusHandler(event,order._id)} value={order.status} className='p-2 font-semibold'>
-                <option value="Order Placed">Order Placed</option>
-                <option value="Packing">Packing</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Out for delivery">Out for delivery</option>
-                <option value="Delivered">Delivered</option>
-              </select>
+              {isCancelled ? (
+                <p className='p-2 font-semibold text-red-600'>Cancelled</p>
+              ) : (
+                <select onChange={(event) => statusHandler(event,order._id)} value={order.status} className='p-2 font-semibold'>
+                  <option value="Order Placed">Order Placed</option>
+                  <option value="Packing">Packing</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Out for delivery">Out for delivery</option>
+                  <option value="Delivered">Delivered</option>
+                </select>
+              )}
           </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   );

@@ -269,6 +269,16 @@ const updateStatus = async (req,res) => {
      try{
      
         const {orderId, status}  = req.body
+        const order = await orderModel.findById(orderId)
+
+        if(!order) {
+             return res.json({success:false, message:'Order not found'})
+        }
+
+        if(order.status === 'Cancelled') {
+             return res.json({success:false, message:'Cancelled orders cannot be updated'})
+        }
+
         await orderModel.findByIdAndUpdate(orderId, {status})
 
         res.json({success:true, message:'Status Updated'})
