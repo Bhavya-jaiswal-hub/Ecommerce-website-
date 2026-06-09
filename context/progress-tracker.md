@@ -1,14 +1,14 @@
 # Progress Tracker
 
-Last updated: 2026-06-02.
+Last updated: 2026-06-09.
 
 ## Current Phase
 
-Baseline stabilization.
+Spec-driven feature implementation.
 
 ## Current Goal
 
-Fix remaining baseline issues before expanding features.
+Implement Spec 01: product size guard and customer order cancellation.
 
 ## Completed
 
@@ -36,6 +36,7 @@ Current baseline:
 - Issue 14 closed: customer product links now route cleanly by removing the Collection render loop and making Product detail render immediately from ShopContext while re-fetching `/api/product/single` for the current `/product/:productId`. The product page treats that API refresh as non-blocking so stale admin/auth responses do not show unwanted toasts on public product details. Related-product clicks now scroll back to the top of the newly selected product, and the related list excludes the current product.
 - Storefront product loading follows the admin catalog: customer product lists mirror `/api/product/list`, so an empty backend product collection intentionally renders no products.
 - Admin local login CORS fixed: backend now allows `http://localhost:5174` so the admin Vite dev server can call `/api/user/admin` during local development.
+- Spec 01 complete: Product detail now blocks Add to Cart without a selected size, `/api/order/cancel` lets authenticated customers cancel their own eligible orders, and the customer Orders page supports cancellation plus inline order tracking steps.
 
 Spec context created:
 
@@ -95,6 +96,7 @@ For new features:
 - Admin auth, checkout error handling, admin order catch blocks, Authorization header migration, `req.userId` auth identity, public product detail, frontend/admin lint cleanup, rupee currency display, unused backend email SDK dependencies, large static frontend page images, admin build output ignores, product detail route-param re-fetching, and the Collection render loop blocking product navigation were fixed on 2026-06-01.
 - On 2026-06-02, local `/api/product/list` was confirmed to return `success: true` with an empty `products` array because the admin removed all products. A temporary demo fallback was removed so the customer app shows only admin-created backend products.
 - On 2026-06-02, admin login from `http://localhost:5174` was blocked by the backend CORS allowlist. Added the local admin origin to `backend/server.js`; `node --check backend/server.js` and `admin` build pass.
+- On 2026-06-09, Spec 01 was implemented across `frontend/src/pages/Product.jsx`, `backend/controllers/orderController.js`, `backend/routes/orderRoute.js`, and `frontend/src/pages/Orders.jsx`. Cancellation is owner-checked through `req.userId`, blocked for shipped/out-for-delivery/delivered orders, and uses `Authorization: Bearer` from the customer Orders page.
 - Some source files contain mojibake for the intended rupee symbol and check/cross console text. Currency display should be normalized deliberately rather than copied blindly.
 - `PlaceOrder.jsx` uses `toast` without importing it, so payment/order error paths can break at runtime.
 - `Collection.jsx` imports `use` from React even though it is unused.

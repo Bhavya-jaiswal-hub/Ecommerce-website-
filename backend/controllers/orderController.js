@@ -228,6 +228,41 @@ const userOrders = async (req,res) => {
      }
 }   
 
+// cancel order for frontend
+
+const cancelOrder = async (req,res) => {
+     try {
+          const {orderId} = req.body
+          const userId = req.userId
+          const blockedStatuses = ['Shipped', 'Out for Delivery', 'Delivered']
+
+          if(!orderId) {
+               return res.json({success:false, message:'Order ID is required'})
+          }
+
+          const order = await orderModel.findById(orderId)
+
+          if(!order) {
+               return res.json({success:false, message:'Order not found'})
+          }
+
+          if(order.userId !== userId) {
+               return res.json({success:false, message:'Unauthorized order cancellation'})
+          }
+
+          if(blockedStatuses.includes(order.status)) {
+               return res.json({success:false, message:'Order cannot be cancelled at this stage'})
+          }
+
+          await orderModel.findByIdAndUpdate(orderId, {status:'Cancelled'})
+          res.json({success:true})
+
+     } catch(error) {
+          console.log(error)
+          res.json({success:false, message:error.message})
+     }
+}
+
 // update order status  for admin panel 
 
 const updateStatus = async (req,res) => {
@@ -244,4 +279,4 @@ const updateStatus = async (req,res) => {
      }
 }  
 
-export {verifyStripe ,placeOrder ,verifyRazorpay, placeOrderStripe, placeOrderRazorpay,allOrders,userOrders,updateStatus}
+export {verifyStripe ,placeOrder ,verifyRazorpay, placeOrderStripe, placeOrderRazorpay,allOrders,userOrders,cancelOrder,updateStatus}
